@@ -1,6 +1,6 @@
 <?php
 session_start();
-if (!isset($_SESSION['user'])) { header("Location: login.php"); exit(); }
+if (!isset($_SESSION['user'])) { header("Location: index.php"); exit(); }
 require 'db.php';
 
 if (isset($_GET['delete'])) {
@@ -15,24 +15,35 @@ $result = $conn->query("SELECT * FROM students");
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>Student Records</title>
 <style>
-  body { font-family: Arial, sans-serif; margin: 30px; }
-  h2 { margin-bottom: 10px; }
-  a.btn { padding: 7px 14px; background: #4a90d9; color: white; text-decoration: none; border-radius: 4px; font-size: 13px; }
+  body { font-family: Arial, sans-serif; margin: 30px; background: #f0f2f5; }
+  .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  h2 { margin: 0; }
+  a.btn { padding: 8px 14px; background: #4a90d9; color: white; text-decoration: none; border-radius: 5px; font-size: 13px; }
+  a.btn:hover { background: #357abd; }
   a.del { background: #e74c3c; }
+  a.del:hover { background: #c0392b; }
   a.edit { background: #f39c12; }
-  table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-  th, td { padding: 10px; border: 1px solid #ddd; text-align: left; font-size: 14px; }
+  a.edit:hover { background: #d68910; }
+  a.logout { background: #888; }
+  a.logout:hover { background: #666; }
+  table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+  th, td { padding: 11px 14px; border-bottom: 1px solid #e5e7eb; text-align: left; font-size: 14px; }
   th { background: #4a90d9; color: white; }
-  tr:nth-child(even) { background: #f9f9f9; }
-  .top { display: flex; justify-content: space-between; align-items: center; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #f9fafb; }
+  .actions { display: flex; gap: 6px; }
 </style>
 </head>
 <body>
 <div class="top">
   <h2>Student Records</h2>
-  <a href="create_student.php" class="btn">+ Add Student</a>
+  <div class="actions">
+    <a href="pages/create_student.php" class="btn">+ Add Student</a>
+    <a href="logout.php" class="btn logout">Logout</a>
+  </div>
 </div>
 
 <table>
@@ -45,12 +56,12 @@ $result = $conn->query("SELECT * FROM students");
   </tr>
   <?php while ($row = $result->fetch_assoc()): ?>
   <tr>
-    <td><?= $row['id_number'] ?></td>
-    <td><?= $row['name'] ?></td>
-    <td><?= $row['email'] ?></td>
-    <td><?= $row['course'] ?></td>
-    <td>
-      <a href="edit_student.php?id=<?= $row['id'] ?>" class="btn edit">Edit</a>
+    <td><?= htmlspecialchars($row['id_number']) ?></td>
+    <td><?= htmlspecialchars($row['name']) ?></td>
+    <td><?= htmlspecialchars($row['email']) ?></td>
+    <td><?= htmlspecialchars($row['course']) ?></td>
+    <td class="actions">
+      <a href="pages/edit_student.php?id=<?= $row['id'] ?>" class="btn edit">Edit</a>
       <a href="home.php?delete=<?= $row['id'] ?>" class="btn del" onclick="return confirm('Delete this student?')">Delete</a>
     </td>
   </tr>
